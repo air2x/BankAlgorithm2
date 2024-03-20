@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import ru.maxima.bankalgorithm2.models.Person;
 import ru.maxima.bankalgorithm2.models.Result;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -11,29 +13,29 @@ import java.util.List;
 @Service
 public class BankService {
 
-    public Result toDistribute(Double allMoney, List<Person> allPersons) {
+    public Result toDistribute(BigDecimal allMoney, List<Person> allPersons) {
         Result result = new Result();
         allPersons.sort(Comparator.comparing(Person::getWallet));
 
-        double maxWallet = allPersons.get(allPersons.size() - 1).getWallet();
+        BigDecimal maxWallet = allPersons.get(allPersons.size() - 1).getWallet();
         for (Person p : allPersons) {
-            p.setAppendFromBank(0.0);
-            if (p.getWallet() < maxWallet) {
-                double difference = maxWallet - p.getWallet();
-                p.setWallet(p.getWallet() + difference);
-                p.setAppendFromBank(p.getAppendFromBank() + difference);
-                allMoney -= difference;
+            p.setAppendFromBank(BigDecimal.ZERO);
+            if (p.getWallet().compareTo(maxWallet) > 0) {
+                BigDecimal difference = maxWallet.subtract(p.getWallet());
+                p.setWallet(p.getWallet().add(difference));
+                p.setAppendFromBank(p.getAppendFromBank().add(difference));
+                allMoney = allMoney.subtract(difference);
             }
         }
-
-        double addToEachPerson = allMoney / allPersons.size();
+        BigDecimal size = BigDecimal.valueOf(allPersons.size());
+        BigDecimal addToEachPerson = allMoney.divide(size, 2, RoundingMode.HALF_UP);
         for (Person p : allPersons) {
-            if (allMoney <= addToEachPerson) {
+            if (allMoney.compareTo(addToEachPerson) <= 0) {
                 addToEachPerson = allMoney;
             }
-            p.setWallet(p.getWallet() + addToEachPerson);
-            p.setAppendFromBank(p.getAppendFromBank() + addToEachPerson);
-            allMoney -= addToEachPerson;
+            p.setWallet(p.getWallet().add(addToEachPerson));
+            p.setAppendFromBank(p.getAppendFromBank().add(addToEachPerson));
+            allMoney = allMoney.subtract(addToEachPerson);
         }
 
         result.setResult(allPersons);

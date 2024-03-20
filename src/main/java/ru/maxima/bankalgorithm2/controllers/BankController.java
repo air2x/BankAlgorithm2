@@ -12,6 +12,7 @@ import ru.maxima.bankalgorithm2.models.Person;
 import ru.maxima.bankalgorithm2.models.Result;
 import ru.maxima.bankalgorithm2.services.BankService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,7 @@ public class BankController {
 
     @PostMapping(consumes = MediaType.APPLICATION_XML_VALUE, produces = MediaType.APPLICATION_XML_VALUE, path = "/bank")
     public ResponseEntity<Result> toDistribute(@RequestBody Bank bank) {
-        Double allMoney = bank.getWallet();
+        BigDecimal allMoney = bank.getWallet();
         List<Person> allPersons = bank.getPersons();
         return ResponseEntity.ok(bankService.toDistribute(allMoney, allPersons));
     }

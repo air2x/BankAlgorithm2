@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -17,7 +18,7 @@ import java.util.List;
 @JacksonXmlRootElement
 public class Bank {
 
-    private Double wallet;
+    private BigDecimal wallet;
 
     @JacksonXmlProperty(localName = "Person")
     @JacksonXmlElementWrapper(useWrapping = false)
