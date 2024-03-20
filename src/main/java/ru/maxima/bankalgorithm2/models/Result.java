@@ -10,9 +10,7 @@ import java.util.List;
 @Setter
 public class Result {
 
-//    @JacksonXmlProperty(localName = "Person")
     private List<Person> result;
 
-//    @JacksonXmlProperty(localName = "Person")
     private List<Person> minimum;
 }
